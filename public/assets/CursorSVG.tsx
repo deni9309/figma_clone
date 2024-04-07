@@ -1,4 +1,4 @@
-function CursorSVG({ color }: { color: string }) {
+function CursorSVG({ color }: { color: string; }) {
   return (
     <svg
       className="relative"
