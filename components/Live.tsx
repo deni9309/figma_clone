@@ -9,7 +9,11 @@ import ReactionSelector from "./reaction/ReactionButton";
 import FlyingReaction from "./reaction/FlyingReaction";
 import useInterval from "@/hooks/useInterval";
 
-const Live = () => {
+type Props = {
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+};
+
+const Live = ({ canvasRef }: Props) => {
   const others = useOthers();
   const [{ cursor }, updateMyPresence] = useMyPresence() as any;
   const broadcast = useBroadcastEvent();
@@ -123,13 +127,15 @@ const Live = () => {
   }, [updateMyPresence]);
 
   return (
-    <div className="flex justify-center items-center text-center w-full h-[100vh]"
+    <div id="canvas"
+      className="flex justify-center items-center text-center w-full h-[100vh]"
       onPointerMove={handlePointerMove}
       onPointerDown={handlePointerDown}
       onPointerLeave={handlePointerLeave}
       onPointerUp={handlePointerUp}
     >
-      <canvas />
+      <canvas ref={canvasRef} />
+
       {reactions.map(reaction => (
         <FlyingReaction
           key={reaction.timestamp.toString()}

@@ -16,9 +16,6 @@ import { createSpecificShape } from "./shapes";
 
 /**
  * Initialize fabric canvas
- * @param fabricRef
- * @param canvasRef
- * @returns fabric.Canvas
  */
 export const initializeFabric = ({ fabricRef, canvasRef }: {
   fabricRef: React.MutableRefObject<fabric.Canvas | null>;
