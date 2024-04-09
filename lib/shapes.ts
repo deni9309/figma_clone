@@ -145,7 +145,7 @@ export const modifyShape = ({
   // if  property is width or height, set the scale of the selected element
   if (property === "width") {
     selectedElement.set("scaleX", 1);
-    selectedElement.set("width", value);  
+    selectedElement.set("width", value);
   } else if (property === "height") {
     selectedElement.set("scaleY", 1);
     selectedElement.set("height", value);
@@ -181,6 +181,4 @@ export const bringElement = ({
 
   // canvas.renderAll();
   syncShapeInStorage(selectedElement);
-
-  // re-render all objects on the canvas
 };

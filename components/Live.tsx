@@ -129,6 +129,7 @@ const Live = () => {
       onPointerLeave={handlePointerLeave}
       onPointerUp={handlePointerUp}
     >
+      <canvas />
       {reactions.map(reaction => (
         <FlyingReaction
           key={reaction.timestamp.toString()}

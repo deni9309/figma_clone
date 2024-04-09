@@ -26,4 +26,13 @@
   .right-menu-item {
     @apply flex justify-between px-3 py-2 hover:bg-primary-grey-200 !important;
   }
+
+  /* ============= SIDEBARS ============= */
+  .left-sidebar {
+    @apply flex flex-col text-primary-grey-300 min-w-[227px] h-full border-t border-primary-grey-200 bg-primary-black sticky left-0 max-sm:hidden select-none overflow-y-auto pb-20;
+  }
+
+  .right-sidebar{
+    @apply flex flex-col text-primary-grey-300 min-w-[227px] h-full border-t border-primary-grey-200 bg-primary-black sticky right-0 max-sm:hidden select-none overflow-y-auto pb-20;
+  }
 }

@@ -5,11 +5,11 @@ import { CustomFabricObject } from "@/types/type";
 
 export const handleCopy = (canvas: fabric.Canvas) => {
   const activeObjects = canvas.getActiveObjects();
+
   if (activeObjects.length > 0) {
-    // Serialize the selected objects
-    const serializedObjects = activeObjects.map((obj) => obj.toObject());
-    // Store the serialized objects in the clipboard
-    localStorage.setItem("clipboard", JSON.stringify(serializedObjects));
+    const serializedObjects = activeObjects.map((obj) => obj.toObject());  // Serialize the selected objects
+
+    localStorage.setItem("clipboard", JSON.stringify(serializedObjects));  // Store the serialized objects in the clipboard
   }
 
   return activeObjects;
@@ -24,31 +24,29 @@ export const handlePaste = (
     return;
   }
 
-  // Retrieve serialized objects from the clipboard
-  const clipboardData = localStorage.getItem("clipboard");
+  const clipboardData = localStorage.getItem("clipboard");   // Retrieve serialized objects from the clipboard
 
   if (clipboardData) {
     try {
       const parsedObjects = JSON.parse(clipboardData);
-      parsedObjects.forEach((objData: fabric.Object) => {
-        // convert the plain javascript objects retrieved from localStorage into fabricjs objects (deserialization)
-        fabric.util.enlivenObjects(
-          [objData],
-          (enlivenedObjects: fabric.Object[]) => {
-            enlivenedObjects.forEach((enlivenedObj) => {
-              // Offset the pasted objects to avoid overlap with existing objects
-              enlivenedObj.set({
-                left: enlivenedObj.left || 0 + 20,
-                top: enlivenedObj.top || 0 + 20,
-                objectId: uuidv4(),
-                fill: "#aabbcc",
-              } as CustomFabricObject<any>);
 
-              canvas.add(enlivenedObj);
-              syncShapeInStorage(enlivenedObj);
-            });
-            canvas.renderAll();
-          },
+      parsedObjects.forEach((objData: fabric.Object) => {
+
+        // convert the plain javascript objects retrieved from localStorage into fabricjs objects (deserialization)
+        fabric.util.enlivenObjects([objData], (enlivenedObjects: fabric.Object[]) => {
+          enlivenedObjects.forEach((obj) => {
+            obj.set({          // Offset the pasted objects to avoid overlap with existing objects
+              left: obj.left || 0 + 20,
+              top: obj.top || 0 + 20,
+              objectId: uuidv4(),
+              fill: "#aabbcc",
+            } as CustomFabricObject<any>);
+
+            canvas.add(obj);
+            syncShapeInStorage(obj);
+          });
+          canvas.renderAll();
+        },
           "fabric"
         );
       });
@@ -68,6 +66,7 @@ export const handleDelete = (
   if (activeObjects.length > 0) {
     activeObjects.forEach((obj: CustomFabricObject<any>) => {
       if (!obj.objectId) return;
+      
       canvas.remove(obj);
       deleteShapeFromStorage(obj.objectId);
     });
