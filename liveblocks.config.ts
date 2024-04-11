@@ -1,4 +1,4 @@
-import { createClient, IUserInfo } from "@liveblocks/client";
+import { createClient, IUserInfo, LiveMap } from "@liveblocks/client";
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
 
 const client = createClient({
@@ -9,8 +9,9 @@ const client = createClient({
 // and that will automatically be kept in sync. Accessible through the
 // `user.presence` property. Must be JSON-serializable.
 type Presence = {
-  cursor: { x: number, y: number } | null,
-  // ...
+  cursor: { x: number, y: number; } | null;
+  cursorColor?: string | null;
+  edittingText?: boolean | null;
 };
 
 // Optionally, Storage represents the shared document that persists in the
@@ -18,8 +19,7 @@ type Presence = {
 // LiveList, LiveMap, LiveObject instances, for which updates are
 // automatically persisted and synced to all connected clients.
 type Storage = {
-  // author: LiveObject<{ firstName: string, lastName: string }>,
-  // ...
+  canvasObjects: LiveMap<string, any>;
 };
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
@@ -40,12 +40,12 @@ type RoomEvent = {
 // Optionally, when using Comments, ThreadMetadata represents metadata on
 // each thread. Can only contain booleans, strings, and numbers.
 export type ThreadMetadata = {
- // resolved?: boolean;
- // quote?: string;
- // time?: number;
- // zIndex?: number;
- // x?: number;
- // y?: number;
+  // resolved?: boolean;
+  // quote?: string;
+  // time?: number;
+  // zIndex?: number;
+  // x?: number;
+  // y?: number;
 };
 
 // Room-level hooks, use inside `RoomProvider`

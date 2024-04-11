@@ -159,7 +159,6 @@ export const handleCanvasMouseUp = ({
   }
 };
 
-// 
 /**
  * Update shape in storage when object is modified
  */
@@ -274,7 +273,7 @@ export const handleCanvasObjectScaling = ({ options, setElementAttributes }: Can
 export const renderCanvas = ({ fabricRef, canvasObjects, activeObjectRef }: RenderCanvas) => {
   fabricRef.current?.clear();
 
-  // render all objects on canvas
+  // render all objects on canvas (from storage)
   Array.from(canvasObjects, ([objectId, objectData]) => {
     /**
      * enlivenObjects() is used to render objects on canvas.

@@ -1,7 +1,7 @@
 .goUp0 {
   opacity: 0;
   animation:
-    goUpAnimation0 2s,
+    goUpAnimation0 2.5s,
     fadeOut 2s;
 }
 
@@ -18,7 +18,7 @@
 .goUp1 {
   opacity: 0;
   animation:
-    goUpAnimation1 2s,
+    goUpAnimation1 2.5s,
     fadeOut 2s;
 }
 
@@ -35,7 +35,7 @@
 .goUp2 {
   opacity: 0;
   animation:
-    goUpAnimation2 2s,
+    goUpAnimation2 2.5s,
     fadeOut 2s;
 }
 
