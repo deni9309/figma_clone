@@ -21,8 +21,11 @@ const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveE
       <ul className="flex flex-row">
         {navElements.map((item: ActiveElement | any) => (
           <li key={item.name}
-            onClick={() => { if (Array.isArray(item.value)) return; handleActiveElement(item); }}
             className={`flex justify-center items-center group px-2.5 py-5 ${isActive(item.value) ? "bg-primary-green" : "hover:bg-primary-grey-200"}`}
+            onClick={() => {
+              if (Array.isArray(item.value)) return;
+              handleActiveElement(item);
+            }}
           >
             {Array.isArray(item.value) ? (
               <ShapesMenu
