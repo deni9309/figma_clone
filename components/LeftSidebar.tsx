@@ -16,13 +16,12 @@ const LeftSidebar = ({ allShapes }: { allShapes: Array<any>; }) => {
           return (
             <div key={shape[1]?.objectId} className="group my-1 flex items-center gap-2 px-5 py-2.5 hover:cursor-pointer hover:bg-primary-green hover:text-primary-black">
               <Image src={info?.icon} alt="layer" width={16} height={16} className="group-hover:invert" />
+              <h3 className="text-sm font-semibold capitalize">{info.name}</h3>
             </div>
           );
         })}
       </div>
     </section>
-
-
   ), [allShapes?.length]);
 
   return memoizedShapes;

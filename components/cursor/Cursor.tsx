@@ -6,7 +6,7 @@ type Props = {
   color: string;
   x: number;
   y: number;
-  message: string;
+  message?: string;
 };
 
 const Cursor = ({ color, x, y, message }: Props) => {
@@ -15,10 +15,9 @@ const Cursor = ({ color, x, y, message }: Props) => {
       <CursorSVG color={color} />
 
       {message && (
-        <div style={{backgroundColor: color}} className="absolute left-2 top-5 rounded-3xl px-4 py-2">
+        <div style={{ backgroundColor: color, borderRadius: 20 }} className="absolute left-2 top-5 rounded-3xl px-4 py-2">
           <p className="text-white whitespace-nowrap text-sm leading-relaxed">{message}</p>
         </div>
-
       )}
     </div>
   );

@@ -8,21 +8,27 @@ import RightSidebar from "@/components/RightSidebar";
 import Live from "@/components/Live";
 import { handleCanvaseMouseMove, handleCanvasMouseDown, handleCanvasMouseUp, handleCanvasObjectModified, handleResize, initializeFabric, renderCanvas } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
-import { useMutation, useStorage } from "@/liveblocks.config";
+import { useMutation, useRedo, useStorage, useUndo } from "@/liveblocks.config";
 import { defaultNavElement } from "@/constants";
-import { handleDelete } from "@/lib/key-events";
+import { handleDelete, handleKeyDown } from "@/lib/key-events";
+import { handleImageUpload } from "@/lib/shapes";
 
 export default function Page() {
-  /** canvasRef is a reference to the canvas element that we'll use to initialize the fabric canvas. */
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const undo = useUndo();
+  const redo = useRedo();
 
-  /** fabricRef is a reference to the fabric canvas that we use to perform operations on the canvas.
-  * It's a copy of the created canvas so we can use it outside the canvas event listeners. */
+  /**
+   * canvasRef is a reference to the canvas element that we'll use to initialize the fabric canvas. */
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  /** 
+   * fabricRef is a reference to the fabric canvas that we use to perform operations on the canvas.
+   * It's a copy of the created canvas so we can use it outside the canvas event listeners. */
   const fabricRef = useRef<fabric.Canvas | null>(null);
   const isDrawing = useRef(false);
   const shapeRef = useRef<fabric.Object | null>(null);
   const selectedShapeRef = useRef<string | null>(null);
   const activeObjectRef = useRef<fabric.Object | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const canvasObjects = useStorage(root => root.canvasObjects);
 
@@ -91,15 +97,24 @@ export default function Page() {
     setActiveElement(el);
 
     switch (el?.value) {
-      case 'reset':      // delete all shapes from the canvas
-        deleteAllShapes();      // clear the storage
-        fabricRef.current?.clear();      // clear the canvas
-        setActiveElement(defaultNavElement);      // set "select" as the active element
+      case 'reset':                                  // 'reset' deletes all shapes from the canvas
+        deleteAllShapes();                           // clear the storage
+        fabricRef.current?.clear();                  // clear the canvas
+        setActiveElement(defaultNavElement);         // set "select" as the active element
         break;
 
-      case 'delete':      // delete the selected shape from the canvas
+      case 'delete':                                 // 'delete' deletes the selected shape from the canvas
         handleDelete(fabricRef.current as any, deleteShapeFromStorage);
         setActiveElement(defaultNavElement);
+        break;
+
+      case 'image':
+        imageInputRef.current?.click();
+        isDrawing.current = false;
+
+        if (fabricRef.current) {
+          fabricRef.current.isDrawingMode = false;
+        }
         break;
 
       default:
@@ -108,6 +123,7 @@ export default function Page() {
     selectedShapeRef.current = el?.value as string;
   };
 
+  // Handle mouse/object/keyboard events
   useEffect(() => {
     const canvas = initializeFabric({ fabricRef, canvasRef });
 
@@ -152,6 +168,17 @@ export default function Page() {
       handleResize({ canvas: fabricRef.current });
     });
 
+    window.addEventListener("keydown", (e) => {
+      handleKeyDown({
+        e,
+        canvas: fabricRef.current,
+        undo,
+        redo,
+        syncShapeInStorage,
+        deleteShapeFromStorage
+      });
+    });
+
     return () => { canvas.dispose(); };
   }, [canvasRef]);
 
@@ -164,10 +191,21 @@ export default function Page() {
       <Navbar
         activeElement={activeElement}
         handleActiveElement={handleActiveElement}
+        imageInputRef={imageInputRef}
+        handleImageUpload={(e: any) => {
+          e.stopPropagation();
+
+          handleImageUpload({
+            file: e.target.files[0],
+            canvas: fabricRef as any,
+            shapeRef,
+            syncShapeInStorage
+          });
+        }}
       />
 
       <section className="flex flex-row h-full">
-        <LeftSidebar />
+        <LeftSidebar allShapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />
         <RightSidebar />
       </section>

@@ -33,7 +33,7 @@ const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveE
                 activeElement={activeElement}
                 imageInputRef={imageInputRef}
                 handleActiveElement={handleActiveElement}
-                handleImageUpload={handleActiveElement}
+                handleImageUpload={handleImageUpload}
               />
             ) : item?.value === 'çomments' ? (
               <NewThread>

@@ -66,7 +66,7 @@ export const handleDelete = (
   if (activeObjects.length > 0) {
     activeObjects.forEach((obj: CustomFabricObject<any>) => {
       if (!obj.objectId) return;
-      
+
       canvas.remove(obj);
       deleteShapeFromStorage(obj.objectId);
     });
@@ -102,10 +102,10 @@ export const handleKeyDown = ({
     handlePaste(canvas, syncShapeInStorage);
   }
 
-  // Check if the key pressed is delete/backspace (delete)
-  // if (e.keyCode === 8 || e.keyCode === 46) {
-  //   handleDelete(canvas, deleteShapeFromStorage);
-  // }
+  // Check if the key pressed is delete (delete)  // optionally e.keyCode === 8 (backspace)
+  if (e.keyCode === 46) {
+    handleDelete(canvas, deleteShapeFromStorage);
+  }
 
   // check if the key pressed is ctrl/cmd + x (cut)
   if ((e?.ctrlKey || e?.metaKey) && e.keyCode === 88) {
