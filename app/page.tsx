@@ -6,8 +6,8 @@ import Navbar from "@/components/Navbar";
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import Live from "@/components/Live";
-import { handleCanvaseMouseMove, handleCanvasMouseDown, handleCanvasMouseUp, handleCanvasObjectModified, handleResize, initializeFabric, renderCanvas } from "@/lib/canvas";
-import { ActiveElement } from "@/types/type";
+import { handleCanvaseMouseMove, handleCanvasMouseDown, handleCanvasMouseUp, handleCanvasObjectModified, handleCanvasObjectScaling, handleCanvasSelectionCreated, handleResize, initializeFabric, renderCanvas } from "@/lib/canvas";
+import { ActiveElement, Attributes } from "@/types/type";
 import { useMutation, useRedo, useStorage, useUndo } from "@/liveblocks.config";
 import { defaultNavElement } from "@/constants";
 import { handleDelete, handleKeyDown } from "@/lib/key-events";
@@ -29,8 +29,20 @@ export default function Page() {
   const selectedShapeRef = useRef<string | null>(null);
   const activeObjectRef = useRef<fabric.Object | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const isEditingRef = useRef(false);
 
   const canvasObjects = useStorage(root => root.canvasObjects);
+
+  const [activeElement, setActiveElement] = useState<ActiveElement>({ name: '', value: '', icon: '' });
+  const [elementAttributes, setElementAttributes] = useState<Attributes>({
+    width: '',
+    height: '',
+    fontSize: '',
+    fontFamily: '',
+    fontWeight: '',
+    fill: '#aabbcc',
+    stroke: '#aabbcc'
+  });
 
   /**
   * syncShapeInStorage is a mutation that syncs the shape in the key-value store of liveblocks.
@@ -49,8 +61,6 @@ export default function Page() {
     canvasObjects.set(objectId, shapeData);
   }, []);
 
-  const [activeElement, setActiveElement] = useState<ActiveElement>({ name: '', value: '', icon: '' });
-
   /**
    * deleteAllShapes is a mutation that deletes all shapes from the key-value store of liveblocks.
    *
@@ -62,7 +72,7 @@ export default function Page() {
   const deleteAllShapes = useMutation(({ storage }) => {
     const canvasObjects = storage.get('canvasObjects');
     if (!canvasObjects || canvasObjects.size === 0) return true;
-
+    //@ts-ignore
     for (const [key, value] of canvasObjects.entries()) {
       canvasObjects.delete(key);
     }
@@ -70,17 +80,14 @@ export default function Page() {
   }, []);
 
   /**
-  * deleteShapeFromStorage is a mutation that deletes a shape from the
-  * key-value store of liveblocks.
-  * useMutation is a hook provided by Liveblocks that allows you to perform
-  * mutations on liveblocks data.
+  * deleteShapeFromStorage is a mutation that deletes a shape from the key-value store of liveblocks.
+  * useMutation is a hook provided by Liveblocks that allows you to perform mutations on liveblocks data.
   *
   * useMutation: https://liveblocks.io/docs/api-reference/liveblocks-react#useMutation
   * delete: https://liveblocks.io/docs/api-reference/liveblocks-client#LiveMap.delete
   * get: https://liveblocks.io/docs/api-reference/liveblocks-client#LiveMap.get
   *
-  * We're using this mutation to delete a shape from the key-value store when
-  * the user deletes a shape from the canvas.
+  * We're using this mutation to delete a shape from the key-value store when the user deletes a shape from the canvas.
   */
   const deleteShapeFromStorage = useMutation(({ storage }, objectId) => {
     /**
@@ -164,6 +171,14 @@ export default function Page() {
       handleCanvasObjectModified({ options, syncShapeInStorage });
     });
 
+    canvas.on('selection:created', (options) => {
+      handleCanvasSelectionCreated({ options, isEditingRef, setElementAttributes });
+    });
+
+    canvas.on('object:scaling', (options) => {
+      handleCanvasObjectScaling({ options, setElementAttributes });
+    });
+
     window.addEventListener("resize", () => {
       handleResize({ canvas: fabricRef.current });
     });
@@ -207,7 +222,14 @@ export default function Page() {
       <section className="flex flex-row h-full">
         <LeftSidebar allShapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />
-        <RightSidebar />
+        <RightSidebar
+          elementAttributes={elementAttributes}
+          setElementAttributes={setElementAttributes}
+          fabricRef={fabricRef}
+          activeObjectRef={activeObjectRef}
+          isEditingRef={isEditingRef}
+          syncShapeInStorage={syncShapeInStorage}
+        />
       </section>
     </main>
   );

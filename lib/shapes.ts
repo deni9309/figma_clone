@@ -118,11 +118,7 @@ export const handleImageUpload = ({
   reader.readAsDataURL(file);
 };
 
-export const createShape = (
-  canvas: fabric.Canvas,
-  pointer: PointerEvent,
-  shapeType: string
-) => {
+export const createShape = (canvas: fabric.Canvas, pointer: PointerEvent, shapeType: string) => {
   if (shapeType === "freeform") {
     canvas.isDrawingMode = true;
     return null;
@@ -142,7 +138,7 @@ export const modifyShape = ({
 
   if (!selectedElement || selectedElement?.type === "activeSelection") return;
 
-  // if  property is width or height, set the scale of the selected element
+  // if the property is 'width' or 'height', set the scale of the selected element
   if (property === "width") {
     selectedElement.set("scaleX", 1);
     selectedElement.set("width", value);
@@ -154,31 +150,22 @@ export const modifyShape = ({
     selectedElement.set(property as keyof object, value);
   }
 
-  // set selectedElement to activeObjectRef
-  activeObjectRef.current = selectedElement;
+  activeObjectRef.current = selectedElement;   // set selectedElement to activeObjectRef
 
   syncShapeInStorage(selectedElement);
 };
 
-export const bringElement = ({
-  canvas,
-  direction,
-  syncShapeInStorage,
-}: ElementDirection) => {
+export const bringElement = ({ canvas, direction, syncShapeInStorage }: ElementDirection) => {
   if (!canvas) return;
 
-  // get the selected element. If there is no selected element or there are more than one selected element, return
   const selectedElement = canvas.getActiveObject();
+  if (!selectedElement || selectedElement?.type === "activeSelection") return;  // If no element is selected or > 1 elements are selected, return
 
-  if (!selectedElement || selectedElement?.type === "activeSelection") return;
-
-  // bring the selected element to the front
   if (direction === "front") {
     canvas.bringToFront(selectedElement);
   } else if (direction === "back") {
     canvas.sendToBack(selectedElement);
   }
 
-  // canvas.renderAll();
-  syncShapeInStorage(selectedElement);
+  syncShapeInStorage(selectedElement);   // canvas.renderAll();
 };
