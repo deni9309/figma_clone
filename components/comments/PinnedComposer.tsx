@@ -17,11 +17,10 @@ const PinnedComposer = ({ onComposerSubmit, ...props }: Props) => {
           className="rounded-full"
         />
       </div>
-
       <div className="shadow bg-white rounded-lg flex flex-col text-sm min-w-96 overflow-hidden p-2">
-        {/* We're using the Composer component to create a new comment.
-         Liveblocks provides a Composer component that allows to create/edit/delete comments. */}
-        <Composer onComposerSubmit={onComposerSubmit}
+        {/** We're using the Composer component to create a new comment. Liveblocks provides a Composer component that allows to create/edit/delete comments. */}
+        <Composer
+          onComposerSubmit={onComposerSubmit}
           autoFocus={true}
           onKeyUp={(e) => { e.stopPropagation(); }}
         />

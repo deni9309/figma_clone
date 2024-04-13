@@ -19,9 +19,6 @@ const Color = ({ inputRef, attribute, placeholder, attributeType, handleInputCha
         onChange={(e) => handleInputChange(attributeType, e.target.value)}
       />
       <Label className="flex-1">{attribute}</Label>
-      <Label className="flex items-center justify-center h-6 w-8 bg-primary-grey-100 text-[10px] leading-3">
-        90%
-      </Label>
     </div>
   </div>
 );

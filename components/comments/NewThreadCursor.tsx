@@ -6,16 +6,17 @@ const DEFAULT_CURSOR_POSITION = -10000;
 
 // display a custom cursor when placing a new thread
 const NewThreadCursor = ({ display }: { display: boolean; }) => {
-  const [coords, setCoords] = useState({ x: DEFAULT_CURSOR_POSITION, y: DEFAULT_CURSOR_POSITION });
+  const [coords, setCoords] = useState({
+    x: DEFAULT_CURSOR_POSITION,
+    y: DEFAULT_CURSOR_POSITION,
+  });
 
   useEffect(() => {
     const updatePosition = (e: MouseEvent) => {
-      const canvas = document.getElementById("canvas");   // get canvas element
+      const canvas = document.getElementById("canvas");
 
       if (canvas) {
-        // getBoundingClientRect returns the size of an element and its position relative to the viewport
         const canvasRect = canvas.getBoundingClientRect();
-
         // check if the mouse is outside the canvas if so, hide the custom comment cursor
         if (
           e.clientX < canvasRect.left ||
@@ -23,12 +24,14 @@ const NewThreadCursor = ({ display }: { display: boolean; }) => {
           e.clientY < canvasRect.top ||
           e.clientY > canvasRect.bottom
         ) {
-          setCoords({ x: DEFAULT_CURSOR_POSITION, y: DEFAULT_CURSOR_POSITION, });
+          setCoords({
+            x: DEFAULT_CURSOR_POSITION,
+            y: DEFAULT_CURSOR_POSITION,
+          });
           return;
         }
       }
-
-      setCoords({ x: e.clientX, y: e.clientY }); // set the coordinates of the cursor
+      setCoords({ x: e.clientX, y: e.clientY });
     };
 
     document.addEventListener("mousemove", updatePosition, false);
@@ -48,13 +51,16 @@ const NewThreadCursor = ({ display }: { display: boolean; }) => {
     }
   }, [display]);
 
-  if (!display) return null;
+  if (!display) { return null; }
 
   return (
     // Portal.Root is used to render a component outside of its parent component
     <Portal.Root>
-      <div className="pointer-events-none fixed left-0 top-0 h-9 w-9 cursor-grab select-none rounded-bl-full rounded-br-full rounded-tl-md rounded-tr-full bg-white shadow-2xl"
-        style={{ transform: `translate(${coords.x}px, ${coords.y}px)` }}
+      <div
+        className="pointer-events-none fixed left-0 top-0 h-9 w-9 cursor-grab select-none rounded-bl-full rounded-br-full rounded-tl-md rounded-tr-full bg-white shadow-2xl"
+        style={{
+          transform: `translate(${coords.x}px, ${coords.y}px)`,
+        }}
       />
     </Portal.Root>
   );

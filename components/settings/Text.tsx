@@ -35,7 +35,6 @@ const Text = ({ fontFamily, fontSize, fontWeight, handleInputChange }: TextProps
         fontFamily,
         handleInputChange,
       })}
-
       <div className="flex gap-2">
         {selectConfigs.slice(1).map((config) =>
           RenderSelect({
@@ -84,7 +83,7 @@ const RenderSelect = ({ config, fontSize, fontWeight, fontFamily, handleInputCha
         }
       />
     </SelectTrigger>
-    <SelectContent className="border-primary-grey-200 bg-primary-black text-primary-grey-300">
+    <SelectContent defaultValue={fontSize} className="border-primary-grey-200 bg-primary-black text-primary-grey-300">
       {config.options.map((option) => (
         <SelectItem
           key={option.value}

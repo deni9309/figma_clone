@@ -1,11 +1,11 @@
 "use client";
-import React, { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { ComposerSubmitComment } from "@liveblocks/react-comments/primitives";
-import * as Portal from "@radix-ui/react-portal";
+import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Slot } from "@radix-ui/react-slot";
+import * as Portal from "@radix-ui/react-portal";
+import { ComposerSubmitComment } from "@liveblocks/react-comments/primitives";
 
-import { useMaxZIndex } from "@/lib/useMaxZIndex";
 import { useCreateThread } from "@/liveblocks.config";
+import { useMaxZIndex } from "@/lib/useMaxZIndex";
 import PinnedComposer from "./PinnedComposer";
 import NewThreadCursor from "./NewThreadCursor";
 
@@ -34,34 +34,30 @@ export const NewThread = ({ children }: Props) => {
   allowComposerRef.current = allowUseComposer;
 
   useEffect(() => {
-    if (creatingCommentState === "complete") return;  // If composer is already placed, don't do anything
+    if (creatingCommentState === "complete") return;    // If composer is already placed, don't do anything
 
-    // Place a composer on the screen
-    const newComment = (e: MouseEvent) => {
+    const newComment = (e: MouseEvent) => {   // Place a composer on the screen
       e.preventDefault();
-
       if (creatingCommentState === "placed") {   // If already placed, click outside to close composer
 
-        const isClickOnComposer = ((e as any)._savedComposedPath = e     // check if the click event is on/inside the composer
-          .composedPath()
-          .some((el: any) => {
-            return el.classList?.contains("lb-composer-editor-actions");
-          }));
+        // check if the click event is on/inside the composer
+        const isClickOnComposer = ((e as any)._savedComposedPath = e.composedPath()
+          .some((el: any) => { return el.classList?.contains("lb-composer-editor-actions"); })
+        );
 
-        if (isClickOnComposer) return;   // if click is inisde/on composer, don't do anything
+        if (isClickOnComposer) return;    // if click is inisde/on composer, don't do anything
 
-        if (!isClickOnComposer) {    // if click is outside composer, close composer
+        if (!isClickOnComposer) {         // if click is outside composer, close composer
           setCreatingCommentState("complete");
           return;
         }
       }
 
-      setCreatingCommentState("placed");   // First click sets composer down
+      setCreatingCommentState("placed");     // First click sets composer down
       setComposerCoords({ x: e.clientX, y: e.clientY });
     };
 
     document.documentElement.addEventListener("click", newComment);
-
     return () => {
       document.documentElement.removeEventListener("click", newComment);
     };
@@ -70,12 +66,11 @@ export const NewThread = ({ children }: Props) => {
   useEffect(() => {
     // If dragging composer, update position
     const handlePointerMove = (e: PointerEvent) => {
-      (e as any)._savedComposedPath = e.composedPath();   // Prevents issue with composedPath getting removed
+      (e as any)._savedComposedPath = e.composedPath();    // Prevents issue with composedPath getting removed
       lastPointerEvent.current = e;
     };
 
     document.documentElement.addEventListener("pointermove", handlePointerMove);
-
     return () => {
       document.documentElement.removeEventListener("pointermove", handlePointerMove);
     };
@@ -88,7 +83,7 @@ export const NewThread = ({ children }: Props) => {
     const handlePointerDown = (e: PointerEvent) => {
       if (allowComposerRef.current) return;   // if composer is already placed, don't do anything
 
-      (e as any)._savedComposedPath = e.composedPath();   // Prevents issue with composedPath getting removed
+      (e as any)._savedComposedPath = e.composedPath();
       lastPointerEvent.current = e;
       setAllowUseComposer(true);
     };
@@ -119,9 +114,12 @@ export const NewThread = ({ children }: Props) => {
       const overlayPanel = document.querySelector("#canvas");  // Get your canvas element
 
       // if there's no composer coords or last pointer event, meaning the user hasn't clicked yet, don't do anything
-      if (!composerCoords || !lastPointerEvent.current || !overlayPanel) return;
+      if (!composerCoords || !lastPointerEvent.current || !overlayPanel) {
+        return;
+      }
 
-      const { top, left } = overlayPanel.getBoundingClientRect();  // Set coords relative to the top left of your canvas
+      // Set coords relative to the top left of your canvas
+      const { top, left } = overlayPanel.getBoundingClientRect();
       const x = composerCoords.x - left;
       const y = composerCoords.y - top;
 
@@ -148,10 +146,13 @@ export const NewThread = ({ children }: Props) => {
 
       {/* if composer coords exist and we're placing a comment, render the composer */}
       {composerCoords && creatingCommentState === "placed" ? (
-        // Portal.Root is used to render the composer outside of the NewThread component to avoid z-index issuess
+        /** Portal.Root is used to render the composer outside of the NewThread component to avoid z-index issuess */
         <Portal.Root
           className='absolute left-0 top-0'
-          style={{ pointerEvents: allowUseComposer ? "initial" : "none", transform: `translate(${composerCoords.x}px, ${composerCoords.y}px)` }}
+          style={{
+            pointerEvents: allowUseComposer ? "initial" : "none",
+            transform: `translate(${composerCoords.x}px, ${composerCoords.y}px)`,
+          }}
           data-hide-cursors
         >
           <PinnedComposer onComposerSubmit={handleComposerSubmit} />
