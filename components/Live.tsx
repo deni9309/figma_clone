@@ -1,8 +1,8 @@
 'use client';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useBroadcastEvent, useEventListener, useMyPresence, useOthers } from "@/liveblocks.config";
-import { CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
+import { useBroadcastEvent, useEventListener, useMyPresence } from "@/liveblocks.config";
+import { CursorMode, CursorState, Reaction } from "@/types/type";
 import LiveCursors from "./cursor/LiveCursors";
 import CursorChat from "./cursor/CursorChat";
 import ReactionSelector from "./reaction/ReactionButton";
@@ -19,8 +19,8 @@ type Props = {
 };
 
 const Live = ({ canvasRef, undo, redo }: Props) => {
-  const others = useOthers();
-  const [{ cursor }, updateMyPresence] = useMyPresence() as any;
+
+  const [{ cursor }, updateMyPresence] = useMyPresence();
   const broadcast = useBroadcastEvent();
 
   const [cursorState, setCursorState] = useState<CursorState>({ mode: CursorMode.Hidden });
@@ -55,7 +55,7 @@ const Live = ({ canvasRef, undo, redo }: Props) => {
   }, 100);
 
   useEventListener(eventData => {   // listen to events broadcasted by other users
-    const event = eventData.event as ReactionEvent;
+    const event = eventData.event
     setReactions(reactions => reactions.concat([
       {
         point: { x: event.x, y: event.y },
@@ -183,7 +183,7 @@ const Live = ({ canvasRef, undo, redo }: Props) => {
           <ReactionSelector setReaction={(reaction) => { setReaction(reaction); }} />
         )}
 
-        <LiveCursors others={others} />
+        <LiveCursors />
         <Comments />
       </ContextMenuTrigger>
 
